@@ -1,6 +1,6 @@
 package com.example.neo4jdemo;
 
-
+import com.google.common.io.Resources;
 import graphql.schema.GraphQLSchema;
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
@@ -12,7 +12,7 @@ import org.neo4j.graphql.Translator;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
@@ -25,10 +25,11 @@ public class GraphQLProvider {
     private final Translator translator;
 
     public GraphQLProvider(Driver driver) throws IOException {
-        this.driver = driver;
-        InputStream stream = getClass().getResourceAsStream("starWarsSchemaAnnotated.graphqls");
-        String sdl = IOUtils.toString(stream, StandardCharsets.UTF_8);
+        URL url = Resources.getResource("starWarsSchemaAnnotated.graphqls");
+        String sdl = IOUtils.toString(url, StandardCharsets.UTF_8);
         GraphQLSchema graphQLSchema =  SchemaBuilder.buildSchema(sdl);
+
+        this.driver = driver;
         this.translator = new Translator(graphQLSchema);
     }
 
